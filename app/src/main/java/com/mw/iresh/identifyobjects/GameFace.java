@@ -270,7 +270,79 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                     String v = recognitionListener.getReturnedText();
                     System.out.println("inside the onend..1.." + v);
 
-                    isRecognize();
+                    //isRecognize(animator,name);
+
+
+                    final Thread thread = new Thread() {
+
+                        public void run() {
+                            final boolean[] retState = {false};
+                            boolean st = true;
+                            while (st) {
+                                // mySp.startListening(recognizeIntent);
+                                //String v =recognitionListener.getReturnedText();
+                                //System.out.println("inside the onend..1.." +v);
+
+                                final String result = recognitionListener.getReturnedText();
+                                if (result == "default") {
+                                    st = true;
+                                }
+                                else {
+                                    //st = false;
+
+                                    if (result.equalsIgnoreCase(name)){
+                                        st=false;
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                say("well done! ");
+                                                mySp.stopListening();
+                                                animator.scaleX(1f).scaleY(1f).translationX(0).translationY(0).setDuration(1000).setStartDelay(1000);
+                                                memberText.setText(recognitionListener.getReturnedText());
+                                            }
+                                        });
+                                    }
+                                     else {
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                say("please try again.");
+                                                memberText.setText(recognitionListener.getReturnedText());
+                                            }
+                                        });
+
+                                    }
+
+                                    Thread.currentThread().interrupt();
+
+//                                    handler.post(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (result.equalsIgnoreCase(name)) {
+//                                                mySp.stopListening();
+//                                                say("well done! ");
+//                                                animator.scaleX(1f).scaleY(1f).translationX(0).translationY(0).setDuration(1000).setStartDelay(1000);
+//                                                memberText.setText(recognitionListener.getReturnedText());
+//
+//                                                retState[0] = true;
+//                                                return;
+//
+//                                            } else {
+//                                                mySp.stopListening();
+//                                                say("please try again.");
+//                                                memberText.setText(recognitionListener.getReturnedText());
+//
+//                                            }
+//
+//
+//                                        }
+//                                    });
+                                }
+                            }
+                        }
+                    };
+
+                    thread.start();
 
                     mySp.stopListening();
 
@@ -314,52 +386,52 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
         animator.cancel();
     }
 
-    public boolean isRecognize(){
-
-        final Thread thread = new Thread() {
-            public void run() {
-                final boolean[] retState = {false};
-                boolean st = true;
-                while (st) {
-                    // mySp.startListening(recognizeIntent);
-                    //String v =recognitionListener.getReturnedText();
-                    //System.out.println("inside the onend..1.." +v);
-
-                    final String result = recognitionListener.getReturnedText();
-                    if (result == "default") {
-                        st = true;
-                    } else {
-                        st = false;
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (result.equalsIgnoreCase(name)) {
-                                    mySp.stopListening();
-                                    say("well done! ");
-                                    animator.scaleX(1f).scaleY(1f).translationX(0).translationY(0).setDuration(1000).setStartDelay(1000);
-                                    memberText.setText(recognitionListener.getReturnedText());
-
-                                    retState[0] = true;
-                                    return;
-
-                                } else {
-                                    mySp.stopListening();
-                                    say("please try again.");
-                                    memberText.setText(recognitionListener.getReturnedText());
-
-                                }
-
-
-                            }
-                        });
-                    }
-                }
-            }
-        };
-
-        thread.start();
-        return true;
-    }
+//    public boolean isRecognize(ViewPropertyAnimator animator,String name){
+//
+//        final Thread thread = new Thread() {
+//            public void run() {
+//                final boolean[] retState = {false};
+//                boolean st = true;
+//                while (st) {
+//                    // mySp.startListening(recognizeIntent);
+//                    //String v =recognitionListener.getReturnedText();
+//                    //System.out.println("inside the onend..1.." +v);
+//
+//                    final String result = recognitionListener.getReturnedText();
+//                    if (result == "default") {
+//                        st = true;
+//                    } else {
+//                        st = false;
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (result.equalsIgnoreCase(name)) {
+//                                    mySp.stopListening();
+//                                    say("well done! ");
+//                                    animator.scaleX(1f).scaleY(1f).translationX(0).translationY(0).setDuration(1000).setStartDelay(1000);
+//                                    memberText.setText(recognitionListener.getReturnedText());
+//
+//                                    retState[0] = true;
+//                                    return;
+//
+//                                } else {
+//                                    mySp.stopListening();
+//                                    say("please try again.");
+//                                    memberText.setText(recognitionListener.getReturnedText());
+//
+//                                }
+//
+//
+//                            }
+//                        });
+//                    }
+//                }
+//            }
+//        };
+//
+//        thread.start();
+//        return true;
+//    }
 
     @Override
     public void onInit(int i) {

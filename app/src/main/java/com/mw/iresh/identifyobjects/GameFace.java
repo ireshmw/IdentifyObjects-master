@@ -325,12 +325,13 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
 //
 //                    thread.start();
 //                    thread.interrupt();
-                    boolean x =
+                    boolean x = true;
                     String[] st = {""};
-                    while (st[0]!="found"){
+                    while (x){
                         st = callTread();
                         if (st[0]=="found"){
                             say("well done! ");
+                            x=false;
                              //mySp.stopListening();
                              animator.scaleX(1f).scaleY(1f).translationX(0).translationY(0).setDuration(1000).setStartDelay(1000);
                              memberText.setText(recognitionListener.getReturnedText());

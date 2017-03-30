@@ -58,7 +58,7 @@ public class CustomRecognitionListener implements RecognitionListener {
 //        }
         returnedText = matches.get(0);
 
-        System.out.println("match array results..............." + returnedText);
+        //System.out.println("match array results..............." + returnedText);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CustomRecognitionListener implements RecognitionListener {
 //            returnedText = text;
 //        }
         returnedText = matches.get(0);
-        System.out.println("match array partial..............." + returnedText);
+        //System.out.println("match array partial..............." + returnedText);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CustomRecognitionListener implements RecognitionListener {
     }
 
     public String getReturnedText() {
-        System.out.println("inside the custom Rcognizer getText method........." + returnedText);
+        //System.out.println("inside the custom Rcognizer getText method........." + returnedText);
         return returnedText;
     }
 }

@@ -40,6 +40,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
     CustomRecognitionListener recognitionListener;
     Intent recognizeIntent;
     private TextToSpeech tts;
+    boolean flag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +57,17 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
 
 
 
-        recognizeIntent =new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en");
-        recognizeIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
-        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-        recognizeIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        recognizeIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
-        recognizeIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
-
-        mySp = SpeechRecognizer.createSpeechRecognizer(this);
-        recognitionListener = new CustomRecognitionListener();
-        mySp.setRecognitionListener(recognitionListener);
+//        recognizeIntent =new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en");
+//        recognizeIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+//        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+//        recognizeIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+//        recognizeIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
+//        recognizeIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
+//
+//        mySp = SpeechRecognizer.createSpeechRecognizer(this);
+//        recognitionListener = new CustomRecognitionListener();
+//        mySp.setRecognitionListener(recognitionListener);
 
 
         tts = new TextToSpeech(this,this);
@@ -116,33 +117,46 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
 
 
     public void btnMapLooper(){
-//
-//        int i = 1;
-//        if (i<map.size()){
-//
-//            for (Map.Entry<String, ImageButton> entry : map.entrySet()) {
-//                imageBtnAnimate(entry.getKey(), entry.getValue(), i);
-//                System.out.println("btnmaperloop .........." + entry.getKey()+".........."+ entry.getValue());
-//
-//                i++;
-//            }
-//
-//        }
-        int x=1;
-        String key = member[1];
-        ImageButton nextKey = map.get(key);
-//        for (int i:objectCount){
-//            String key =  member[i];
-//            String nextKey="";
-//            if (i!=member.length){
-//                 nextKey = member[i];
-//            }
-//            //imageBtnAnimate(key, map.get(key),x);
-//            objectAnimating(key, map.get(key),map.get(nextKey),x);
-//            x++;
-//        }
 
-        objectAnimating(key, map.get(key), map.get(nextKey), x);
+        System.out.println("top of the btnMapLooper..............");
+
+        Thread btnMapLoop = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("inside the btnMapLooper.............");
+                int x=0;
+                while (x<5){
+                    //String key = member[1];
+                    //ImageButton nextKey = map.get(key);
+                    if (flag){
+                        flag = false;
+                        System.out.println("inside the btnMapLooper if statement .............");
+                            final String key =  member[x];
+                            String nextKey="";
+                            if (x!=member.length){
+                                nextKey = member[x];
+                            }
+                            //imageBtnAnimate(key, map.get(key),x);
+                        final int finalX = x;
+                        final String finalNextKey = nextKey;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                objectAnimating(key, map.get(key),map.get(finalNextKey), finalX);
+                                System.out.println("after calling the objectAminating.............");
+                            }
+                        });
+//                            objectAnimating(key, map.get(key),map.get(nextKey),x);
+//                        System.out.println("after calling the objectAminating.............");
+                            x++;
+
+                    }
+                }
+            }
+        });
+
+        btnMapLoop.start();
+
     }
 
 
@@ -198,10 +212,25 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
 
 
     public boolean objectAnimating(final String name, final ImageButton currantObject, ImageButton netObject, int delay){
+        System.out.println("inside the the objectAnimating.............");
+
+        recognizeIntent =new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en");
+        recognizeIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+        recognizeIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+        recognizeIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        recognizeIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
+        recognizeIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
+
+        mySp = SpeechRecognizer.createSpeechRecognizer(this);
+        recognitionListener = new CustomRecognitionListener();
+        mySp.setRecognitionListener(recognitionListener);
+
+
 
         final ViewPropertyAnimator animator = currantObject.animate();
         //say("who is this?");
-        animator.scaleX(1.7f).scaleY(1.7f).setDuration(2000).translationX(0).translationY(400).setStartDelay(delay*3000)
+        animator.scaleX(1.7f).scaleY(1.7f).setDuration(2000).translationX(0).translationY(400).setStartDelay(3000)
             .setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationCancel(Animator animation) {
@@ -256,6 +285,8 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                                                     @Override
                                                     public void onAnimationEnd(Animator animation) {
                                                         super.onAnimationEnd(animation);
+                                                        flag =true;
+                                                        mySp.cancel();
                                                         animator.cancel();
                                                     }
                                                 });
@@ -306,6 +337,8 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                 @Override
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
+                    System.out.println("inside the the objectAnimating onstart.............");
+
                 }
 
                 @Override
@@ -317,7 +350,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                 public void onAnimationResume(Animator animation) {
                     super.onAnimationResume(animation);
                 }
-            });
+            }).start();
 
 
 

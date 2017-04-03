@@ -37,6 +37,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
     TextView spText;
     Switch aSwitch;
     SpeechRecognizer mySp;
+
     CustomRecognitionListener recognitionListener;
     Intent recognizeIntent;
     private TextToSpeech tts;
@@ -131,18 +132,22 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                     if (flag){
                         flag = false;
                         System.out.println("inside the btnMapLooper if statement .............");
-                            final String key =  member[x];
-                            String nextKey="";
-                            if (x!=member.length){
-                                nextKey = member[x];
-                            }
-                            //imageBtnAnimate(key, map.get(key),x);
-                        final int finalX = x;
-                        final String finalNextKey = nextKey;
+//                            final String key =  member[x];
+//                            String nextKey="";
+//                            if (x!=member.length){
+//                                nextKey = member[x];
+//                            }
+//                            //imageBtnAnimate(key, map.get(key),x);
+//                        final int finalX = x;
+//                        final String finalNextKey = nextKey;
+
+                        final  int rndKey = objectCount.get(x);
+                        final String key = member[rndKey];
+
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                objectAnimating(key, map.get(key),map.get(finalNextKey), finalX);
+                                objectAnimating(key, map.get(key),map.get(key), rndKey);
                                 System.out.println("after calling the objectAminating.............");
                             }
                         });
@@ -221,7 +226,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
         recognizeIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
         recognizeIntent.putExtra("android.speech.extra.DICTATION_MODE", true);
         recognizeIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
-
+//
         mySp = SpeechRecognizer.createSpeechRecognizer(this);
         recognitionListener = new CustomRecognitionListener();
         mySp.setRecognitionListener(recognitionListener);
@@ -244,7 +249,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
 
                     mySp.startListening(recognizeIntent);
                     String v = recognitionListener.getReturnedText();
-                    System.out.println("inside the onend..1.." + v);
+                    //System.out.println("inside the onend..1.." + v);
 
                     //isRecognize(animator,name);
 
@@ -256,11 +261,23 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                             final boolean[] retState = {false};
                             boolean st = true;
                             while (st) {
-                                // mySp.startListening(recognizeIntent);
-                                //String v =recognitionListener.getReturnedText();
-                                //System.out.println("inside the onend..1.." +v);
 
-                                System.out.println("inside the loop.....................");
+//                                handler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        mySp = SpeechRecognizer.createSpeechRecognizer(GameFace.this);
+//                                        recognitionListener = new CustomRecognitionListener();
+//                                        mySp.setRecognitionListener(recognitionListener);
+//                                        mySp.startListening(recognizeIntent);
+//
+//                                    }
+//                                });
+//
+//                                mySp.startListening(recognizeIntent);
+//                                String v =recognitionListener.getReturnedText();
+//                                System.out.println("inside the onend..1.." +v);
+
+                                //System.out.println("inside the loop.....................");
 
                                 final String result = recognitionListener.getReturnedText();
                                 if (result == "default") {
@@ -270,7 +287,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                                 else {
                                     //st = false;
 
-                                    if (result.equalsIgnoreCase(name)){
+                                    if (result.equalsIgnoreCase(name) || result.equalsIgnoreCase("sun")){
                                         st=false;
                                         handler.post(new Runnable() {
                                             @Override
@@ -300,16 +317,33 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
+                                                mySp.stopListening();
                                                 say("please try again.");
                                                 memberText.setText(recognitionListener.getReturnedText());
+                                                mySp.cancel();
+
+                                                GameFace.this.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mySp.startListening(recognizeIntent);
+                                                    }
+                                                });
+//                                                mySp = SpeechRecognizer.createSpeechRecognizer(GameFace.this);
+//                                                recognitionListener = new CustomRecognitionListener();
+//                                                mySp.setRecognitionListener(recognitionListener);
+
+
+                                                //String v = recognitionListener.getReturnedText();
+                                                recognitionListener.onEndOfSpeech();
+                                                System.out.println("before calling the 'please try again' handler.........");
                                                 return;
                                             }
+
                                         });
-
-                                        continue;
+                                      //startingMic();
+                                        System.out.println("after calling the 'please try again' handler........." );
+//                                        continue;
                                     }
-
-
                                 }
                             }
 
@@ -318,14 +352,14 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                     };
 
                     thread.start();
-                    System.out.println("after the calling loop...............");
-                    mySp.stopListening();
+//                    System.out.println("after the calling loop...............");
+//                    mySp.stopListening();
                     //String v =recognitionListener.getReturnedText();
-                    memberText.setText(v);
-                    System.out.println("inside the onend..2.." + v);
+//                    memberText.setText(v);
+//                    System.out.println("inside the onend..2.." + v);
                     animatorClose(animator);
-                    System.out.println("end of the animation...");
-                    System.out.println("ending words....."+recognitionListener.getReturnedText());
+//                    System.out.println("end of the animation...");
+//                    System.out.println("ending words....."+recognitionListener.getReturnedText());
 
                 }
 
@@ -357,6 +391,9 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
         return true;
     }
 
+   final public void startingMic(){
+        mySp.startListening(recognizeIntent);
+    }
 
     public void animatorClose(ViewPropertyAnimator animator) {
         animator.cancel();

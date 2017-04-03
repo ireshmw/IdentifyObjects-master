@@ -37,6 +37,8 @@ public class CustomRecognitionListener implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
 
+        System.out.println("onEndOf speech called..................");
+        //returnedText = " ";
     }
 
     @Override

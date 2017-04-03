@@ -43,6 +43,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
     private TextToSpeech tts;
     boolean flag = true;
 
+     Thread threadCheck;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -254,7 +255,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                     //isRecognize(animator,name);
 
 
-                    final Thread thread = new Thread() {
+                    threadCheck = new Thread() {
 
                         public void run() {
                             System.out.println("thread started.............");
@@ -317,7 +318,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                                         handler.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                mySp.stopListening();
+                                                //mySp.stopListening();
                                                 say("please try again.");
                                                 memberText.setText(recognitionListener.getReturnedText());
                                                 mySp.cancel();
@@ -325,7 +326,15 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                                                 GameFace.this.runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
+                                                        recognitionListener.setReturnedText("default");
                                                         mySp.startListening(recognizeIntent);
+                                                        try {
+                                                            threadCheck.wait(2000);
+                                                        }
+                                                        catch (Exception e){
+                                                            System.out.println(e);
+                                                        }
+
                                                     }
                                                 });
 //                                                mySp = SpeechRecognizer.createSpeechRecognizer(GameFace.this);
@@ -351,7 +360,7 @@ public class GameFace extends AppCompatActivity implements TextToSpeech.OnInitLi
                         }
                     };
 
-                    thread.start();
+                    threadCheck.start();
 //                    System.out.println("after the calling loop...............");
 //                    mySp.stopListening();
                     //String v =recognitionListener.getReturnedText();

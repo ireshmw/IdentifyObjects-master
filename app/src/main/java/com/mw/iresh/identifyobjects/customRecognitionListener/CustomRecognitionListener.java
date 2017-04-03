@@ -89,4 +89,8 @@ public class CustomRecognitionListener implements RecognitionListener {
         //System.out.println("inside the custom Rcognizer getText method........." + returnedText);
         return returnedText;
     }
+
+    public void setReturnedText(String returnedText) {
+        this.returnedText = returnedText;
+    }
 }
